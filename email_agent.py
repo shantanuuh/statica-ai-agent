@@ -1,10 +1,11 @@
 import smtplib
 import os
 import logging
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
 from typing import Dict, Any, List
 from email_templates import EmailTemplates
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 logger = logging.getLogger(__name__)
 
