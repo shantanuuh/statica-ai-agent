@@ -1,12 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional, Dict, Any, List
-import requests
-import json
+from typing import Optional, Dict, Any
 import logging
 import os
-from email_agent import EmailAutomationAgent  # Add this import
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -14,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="Statica.in AI Agent",
-    description="AI-powered customer support and email automation for statica.in",
+    description="AI-powered customer support for Statica.in - Premium Aircraft Model Kits",
     version="2.0.0"
 )
 
@@ -29,15 +26,20 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
-    agent_type: str = "support"
+    agent_type: str = "product"  # product, support, general
     user_data: Optional[Dict[str, Any]] = None
 
 class EmailRequest(BaseModel):
-    email_type: str  # welcome, support, newsletter, offer, etc.
+    email_type: str
     recipient_email: str
     subject: Optional[str] = None
     custom_message: Optional[str] = None
     user_data: Optional[Dict[str, Any]] = None
+
+class ChatResponse(BaseModel):
+    response: str
+    success: bool = True
+    agent_used: str = "huggingface"
 
 class EmailResponse(BaseModel):
     success: bool
@@ -45,19 +47,17 @@ class EmailResponse(BaseModel):
     email_sent: bool
     recipient: str
 
-class ChatResponse(BaseModel):
-    response: str
-    success: bool = True
-    agent_used: str = "huggingface"
+# Import agents
+from agents.statica_ai_agent import StaticaAIAgent
+from email_agent import EmailAutomationAgent
 
 # Initialize agents
-from agents.statica_ai_agent import StaticaAIAgent  # Your existing agent
 chat_agent = StaticaAIAgent()
-email_agent = EmailAutomationAgent()  # New email agent
+email_agent = EmailAutomationAgent()
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
-    """Main chat endpoint"""
+    """Main chat endpoint for Statica.in"""
     try:
         logger.info(f"Chat request: {request.message}, Agent: {request.agent_type}")
         
@@ -75,14 +75,14 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         logger.error(f"Chat endpoint error: {str(e)}")
         return ChatResponse(
-            response="I apologize, but I'm currently experiencing technical difficulties.",
+            response="I apologize, but I'm currently experiencing technical difficulties. Please try again later or email support@statica.in for immediate assistance.",
             success=False,
             agent_used="fallback"
         )
 
 @app.post("/send-email", response_model=EmailResponse)
 async def send_email_endpoint(request: EmailRequest):
-    """Send automated emails"""
+    """Send automated emails for Statica.in"""
     try:
         logger.info(f"Email request: {request.email_type} to {request.recipient_email}")
         
@@ -118,7 +118,7 @@ async def get_email_templates():
 @app.get("/")
 async def root():
     return {
-        "message": "Statica.in AI Agent + Email Automation", 
+        "message": "Statica.in AI Agent - Premium Aircraft Model Kits", 
         "status": "running",
         "version": "2.0.0",
         "endpoints": {
@@ -133,8 +133,19 @@ async def root():
 async def health_check():
     return {
         "status": "healthy", 
-        "service": "Statica AI Agent + Email Automation",
+        "service": "Statica AI Agent",
         "timestamp": __import__('datetime').datetime.now().isoformat()
+    }
+
+@app.get("/test-chat")
+async def test_chat_get(message: str = "Hello"):
+    """Test chat via GET parameters"""
+    response = await chat_agent.generate_response(message, "product")
+    return {
+        "your_message": message,
+        "ai_response": response,
+        "success": True,
+        "agent_used": "huggingface"
     }
 
 if __name__ == "__main__":
