@@ -20,4 +20,4 @@ services:
       - key: FROM_EMAIL
         value: noreply@statica.in
       - key: FROM_NAME
-        value: Statica Support
+        value: Statica Aircraft Models
