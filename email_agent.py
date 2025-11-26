@@ -1,8 +1,8 @@
 import smtplib
 import os
 import logging
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from typing import Dict, Any, List
 from email_templates import EmailTemplates
 
