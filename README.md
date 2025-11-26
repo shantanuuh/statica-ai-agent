@@ -2,54 +2,47 @@
 
 AI-powered customer support agent for statica.in WordPress site.
 
-## Features
-
-- 🤖 AI-powered customer support
-- 💬 Multiple agent types (support, product, general)
-- 🆓 Free Hugging Face integration
-- 🎯 Intelligent fallback responses
-- 🌐 FastAPI backend
-- 🔒 CORS enabled for WordPress integration
-
-## Deployment on Render
-
-### 1. One-Click Deploy
+## 🚀 Quick Deploy
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
-### 2. Manual Deployment
+## 🔑 Getting Your Hugging Face Token
 
-1. **Fork this repository** to your GitHub account
-2. **Create account** on [Render.com](https://render.com)
-3. **Connect your GitHub** repository
-4. **Create new Web Service** and select this repository
-5. **Add environment variable**:
-   - `HF_TOKEN`: Your Hugging Face token (get free token from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens))
-6. **Deploy** - Render will automatically build and deploy
+### Step 1: Create Account
+1. Go to [Hugging Face](https://huggingface.co)
+2. Sign up for free account
+3. Verify your email
 
-### 3. Configuration
+### Step 2: Generate Token
+1. Go to [Settings → Tokens](https://huggingface.co/settings/tokens)
+2. Click "New token"
+3. Set:
+   - Name: `statica-ai-agent`
+   - Type: `Read`
+   - Expires: `Never`
+4. Click "Generate"
+5. **Copy your token** (starts with `hf_`)
 
-- **Build Command:** `pip install -r requirements.txt`
-- **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+### Step 3: Deploy to Render
+1. Click the "Deploy to Render" button above
+2. Connect your GitHub account
+3. Set environment variable:
+   - **Key:** `HF_TOKEN`
+   - **Value:** `your_copied_token_here`
+4. Click "Create Web Service"
 
-## API Endpoints
+## 📁 Project Structure
+- `main.py` - FastAPI application
+- `requirements.txt` - Python dependencies
+- `render.yaml` - Render deployment config
 
+## 🌐 API Endpoints
 - `POST /chat` - Main chat endpoint
 - `GET /health` - Health check
-- `GET /test` - Test endpoint
-- `GET /test-chat?message=Hello` - Test chat via GET
+- `GET /test` - Test the AI
 
-## WordPress Integration
-
-Update your WordPress plugin with your Render URL:
-`https://your-app-name.onrender.com/chat`
-
-## Example Request
-
+## 💬 Example Usage
 ```bash
 curl -X POST "https://your-app.onrender.com/chat" \
   -H "Content-Type: application/json" \
-  -d '{
-    "message": "What WordPress services do you offer?",
-    "agent_type": "support"
-  }'
+  -d '{"message": "Hello", "agent_type": "support"}'
